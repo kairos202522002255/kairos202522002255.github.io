@@ -1,124 +1,123 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>تحليل غذائي حسب الفئة العمرية</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>تحليل الوزن وتوصيات</title>
   <style>
-    body { font-family: 'Segoe UI', Tahoma, sans-serif; direction: rtl; background-color: #f3f3f3; padding: 20px; text-align: center; }
-    .box { background: white; max-width: 400px; margin: auto; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    h2 { color: #2a4d69; }
-    input, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 6px; border: 1px solid #ccc; font-size: 16px; }
-    button { background-color: #4b5bc4; color: white; font-weight: bold; cursor: pointer; }
-    .result { background: #e9f7ef; padding: 15px; border-radius: 8px; margin-top: 15px; text-align: right; }
-    a { color: #2f5f93; text-decoration: none; }
+    body {
+      font-family: 'Tahoma', sans-serif;
+      background-color: #e3f2fd;
+      color: #003366;
+      padding: 20px;
+      text-align: center;
+    }
+    input, button {
+      padding: 10px;
+      margin: 10px;
+      border-radius: 8px;
+      border: 1px solid #003366;
+    }
+    button {
+      background-color: #003366;
+      color: white;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 20px;
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      border: 2px solid #003366;
+    }
+    img {
+      max-width: 100%;
+      margin-top: 20px;
+      border-radius: 12px;
+      border: 2px solid #ccc;
+    }
   </style>
 </head>
 <body>
 
-  <div class="box">
-    <h2>تحليل حالتك الغذائية حسب فئتك العمرية</h2>
+  <h1>تحليل وزنك وإعطاء خطة غذائية</h1>
 
-    <input type="number" id="weight" placeholder="الوزن بالكيلو">
-    <input type="number" id="height" placeholder="الطول بالسنتيمتر">
-    <input type="number" id="age" placeholder="العمر بالسنوات">
+  <div>
+    <label>الطول (بالمتر):</label><br>
+    <input type="number" id="height" step="0.01" placeholder="مثال: 1.65"><br>
 
-    <button onclick="analyze()">تحليل</button>
+    <label>الوزن (بالكيلو):</label><br>
+    <input type="number" id="weight" placeholder="مثال: 55"><br>
 
-    <div class="result" id="result"></div>
+    <label>العمر:</label><br>
+    <input type="number" id="age" placeholder="مثال: 16"><br>
+
+    <label>الجنس:</label><br>
+    <select id="gender">
+      <option value="أنثى">أنثى</option>
+      <option value="ذكر">ذكر</option>
+    </select><br>
+
+    <button onclick="analyze()">احسب</button>
   </div>
+
+  <div class="result" id="result"></div>
+  <div id="image-container"></div>
 
   <script>
     function analyze() {
-      const weight = parseFloat(document.getElementById("weight").value);
-      const height = parseFloat(document.getElementById("height").value);
-      const age = parseInt(document.getElementById("age").value);
-      const resultDiv = document.getElementById("result");
+      const height = parseFloat(document.getElementById('height').value);
+      const weight = parseFloat(document.getElementById('weight').value);
+      const age = parseInt(document.getElementById('age').value);
+      const gender = document.getElementById('gender').value;
 
-      if (!weight || !height || !age) {
-        resultDiv.innerHTML = "<p>يرجى إدخال الوزن والطول والعمر بشكل صحيح.</p>";
+      if (!height || !weight || !age) {
+        alert("يرجى تعبئة جميع الحقول");
         return;
       }
 
-      const heightM = height / 100;
-      const bmi = weight / (heightM * heightM);
-      let category = "";
-      let status = "";
-      let advice = "";
-      let link = "";
+      const bmi = (weight / (height * height)).toFixed(1);
+      let category = '';
+      let group = '';
+      let recommendation = '';
+      let image = '';
 
-      // تحديد الفئة العمرية
-      if (age >= 1 && age <= 12) {
-        category = "طفل";
-        if (bmi < 14) {
-          status = "نقص وزن";
-          advice = "يُفضل مراجعة طبيب أطفال متخصص لضبط النظام الغذائي حسب النمو.";
-        } else if (bmi >= 14 && bmi < 18) {
-          status = "وزن طبيعي";
-          advice = "استمر في تناول وجبات متوازنة تشمل البروتين والخضروات.";
-        } else {
-          status = "زيادة وزن";
-          advice = "قلل السكريات وركز على الأنشطة البدنية والوجبات الصحية.";
-        }
-        link = "https://www.who.int/news-room/fact-sheets/detail/healthy-diet";
+      if (age <= 12) group = 'طفل';
+      else if (age <= 18) group = 'مراهق';
+      else if (age <= 60) group = 'بالغ';
+      else group = 'كبير سن';
 
-      } else if (age >= 13 && age <= 18) {
-        category = "مراهق";
-        if (bmi < 18.5) {
-          status = "نقص وزن";
-          advice = "ينصح بزيادة السعرات والبروتين لدعم النمو .";
-        } else if (bmi < 25) {
-          status = "وزن مثالي";
-          advice = "تابع نظامًا غذائيًا متوازنًا وابتعد عن الوجبات السريعة.";
-        } else {
-          status = "زيادة وزن";
-          advice = "ابدأ نشاطًا بدنيًا يوميًا وتابع وجبات صحية خفيفة.";
-        }
-        link = "https://www.cdc.gov/nccdphp/dnpao/index.html";
-
-      } else if (age >= 19 && age <= 60) {
-        category = "شخص بالغ";
-        if (bmi < 18.5) {
-          status = "نقص وزن";
-          advice = "أضف سعرات من مصادر صحية كالمكسرات والأفوكادو والبقوليات.";
-        } else if (bmi < 25) {
-          status = "وزن مثالي";
-          advice = "استمر على النظام المتوازن ومارس رياضة 3 مرات أسبوعيًا.";
-        } else if (bmi < 30) {
-          status = "زيادة وزن";
-          advice = "قلل الدهون والسكريات وابدأ بالمشي يوميًا.";
-        } else {
-          status = "سمنة";
-          advice = "استشر أخصائي تغذية وابدأ خطة فقدان وزن تدريجية وآمنة.";
-        }
-        link = "https://www.who.int/health-topics/obesity";
-
-      } else if (age > 60) {
-        category = "كبير سن";
-        if (bmi < 21) {
-          status = "نقص وزن";
-          advice = "احرص على تناول البروتين يوميًا والفيتامينات لمنع الهزال.";
-        } else if (bmi <= 27) {
-          status = "وزن مثالي";
-          advice = "تابع نظامًا غنيًا بالكالسيوم وفيتامين D لدعم العظام.";
-        } else {
-          status = "زيادة وزن";
-          advice = "قلل النشويات وابدأ رياضة خفيفة كالمشي أو السباحة.";
-        }
-        link = "https://www.nia.nih.gov/health/healthy-eating";
+      if (bmi < 18.5) {
+        category = 'نقص في الوزن';
+        recommendation = 'نوصي بزيادة الوزن بطريقة صحية.';
+        image = 'plan.png';
+      } else if (bmi >= 25) {
+        category = 'زيادة في الوزن';
+        recommendation = 'نوصي بخطة لخسارة الوزن.';
+        image = 'arms-back.png';
       } else {
-        category = "فئة غير محددة";
-        status = "لا يمكن التقييم.";
-        advice = "العمر غير منطقي.";
+        category = 'وزنك مثالي';
+        recommendation = 'استمر على نمطك الحالي.';
+        image = '';
       }
 
-      resultDiv.innerHTML = `
-        <p><strong>فئتك:</strong> ${category}</p>
-        <p><strong>مؤشر كتلة الجسم (BMI):</strong> ${bmi.toFixed(1)}</p>
-        <p><strong>تحليل:</strong> ${status}</p>
-        <p>${advice}</p>
-        <p><a href="${link}" target="_blank">تفاصيل أكثر عن النظام الغذائي الموصى به</a></p>
+      let idealWeightLow = (18.5 * height * height).toFixed(1);
+      let idealWeightHigh = (24.9 * height * height).toFixed(1);
+
+      document.getElementById('result').innerHTML = `
+        <h3>تحليل الحالة:</h3>
+        <p>الفئة العمرية: <strong>${group}</strong></p>
+        <p>الجنس: <strong>${gender}</strong></p>
+        <p>مؤشر كتلة الجسم (BMI): <strong>${bmi}</strong> — ${category}</p>
+        <p>${recommendation}</p>
+        ${(category !== 'وزنك مثالي') ? `<p>الوزن المثالي لك يتراوح بين <strong>${idealWeightLow} كغ</strong> و <strong>${idealWeightHigh} كغ</strong></p>` : ''}
       `;
+
+      if (image) {
+        document.getElementById('image-container').innerHTML = `<img src="${image}" alt="خطة غذائية">`;
+      } else {
+        document.getElementById('image-container').innerHTML = '';
+      }
     }
   </script>
 
