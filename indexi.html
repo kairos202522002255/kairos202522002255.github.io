@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>تحليل الوزن وتوصيات</title>
+  <style>
+    body {
+      font-family: 'Tahoma', sans-serif;
+      background-color: #e3f2fd;
+      color: #003366;
+      padding: 20px;
+      text-align: center;
+    }
+    input, button {
+      padding: 10px;
+      margin: 10px;
+      border-radius: 8px;
+      border: 1px solid #003366;
+    }
+    button {
+      background-color: #003366;
+      color: white;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 20px;
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      border: 2px solid #003366;
+    }
+    img {
+      max-width: 100%;
+      margin-top: 20px;
+      border-radius: 12px;
+      border: 2px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>تحليل وزنك وإعطاء خطة غذائية</h1>
+
+  <div>
+    <label>الطول (بالمتر):</label><br>
+    <input type="number" id="height" step="0.01" placeholder="مثال: 1.65"><br>
+
+    <label>الوزن (بالكيلو):</label><br>
+    <input type="number" id="weight" placeholder="مثال: 55"><br>
+
+    <label>العمر:</label><br>
+    <input type="number" id="age" placeholder="مثال: 16"><br>
+
+    <label>الجنس:</label><br>
+    <select id="gender">
+      <option value="أنثى">أنثى</option>
+      <option value="ذكر">ذكر</option>
+    </select><br>
+
+    <button onclick="analyze()">احسب</button>
+  </div>
+
+  <div class="result" id="result"></div>
+  <div id="image-container"></div>
+
+  <script>
+    function analyze() {
+      const height = parseFloat(document.getElementById('height').value);
+      const weight = parseFloat(document.getElementById('weight').value);
+      const age = parseInt(document.getElementById('age').value);
+      const gender = document.getElementById('gender').value;
+
+      if (!height || !weight || !age) {
+        alert("يرجى تعبئة جميع الحقول");
+        return;
+      }
+
+      const bmi = (weight / (height * height)).toFixed(1);
+      let category = '';
+      let group = '';
+      let recommendation = '';
+      let image = '';
+
+      if (age <= 12) group = 'طفل';
+      else if (age <= 18) group = 'مراهق';
+      else if (age <= 60) group = 'بالغ';
+      else group = 'كبير سن';
+
+      if (bmi < 18.5) {
+        category = 'نقص في الوزن';
+        recommendation = 'نوصي بزيادة الوزن بطريقة صحية.';
+        image = 'plan.png';
+      } else if (bmi >= 25) {
+        category = 'زيادة في الوزن';
+        recommendation = 'نوصي بخطة لخسارة الوزن.';
+        image = 'arms-back.png';
+      } else {
+        category = 'وزنك مثالي';
+        recommendation = 'استمر على نمطك الحالي.';
+        image = '';
+      }
+
+      let idealWeightLow = (18.5 * height * height).toFixed(1);
+      let idealWeightHigh = (24.9 * height * height).toFixed(1);
+
+      document.getElementById('result').innerHTML = `
+        <h3>تحليل الحالة:</h3>
+        <p>الفئة العمرية: <strong>${group}</strong></p>
+        <p>الجنس: <strong>${gender}</strong></p>
+        <p>مؤشر كتلة الجسم (BMI): <strong>${bmi}</strong> — ${category}</p>
+        <p>${recommendation}</p>
+        ${(category !== 'وزنك مثالي') ? `<p>الوزن المثالي لك يتراوح بين <strong>${idealWeightLow} كغ</strong> و <strong>${idealWeightHigh} كغ</strong></p>` : ''}
+      `;
+
+      if (image) {
+        document.getElementById('image-container').innerHTML = `<img src="${image}" alt="خطة غذائية">`;
+      } else {
+        document.getElementById('image-container').innerHTML = '';
+      }
+    }
+  </script>
+
+</body>
+</html>
